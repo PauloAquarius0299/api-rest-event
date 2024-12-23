@@ -1,6 +1,7 @@
 package com.paulotech.api_event.controller;
 
 import com.paulotech.api_event.domain.event.Event;
+import com.paulotech.api_event.domain.event.EventDetailsDTO;
 import com.paulotech.api_event.domain.event.EventRequestDTO;
 import com.paulotech.api_event.domain.event.EventResponseDTO;
 import com.paulotech.api_event.service.EventService;
@@ -14,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/event")
@@ -35,6 +37,12 @@ public class EventController {
         EventRequestDTO eventRequestDTO = new EventRequestDTO(title, description, date, city, state, remote, eventUrl, image);
         Event newEvent = this.eventService.createEvent(eventRequestDTO);
         return ResponseEntity.ok(newEvent);
+    }
+
+    @GetMapping("/{eventId}")
+    public ResponseEntity<EventDetailsDTO> getEventDetails(@PathVariable UUID eventId){
+        EventDetailsDTO eventDetails = eventService.getEventDetails(eventId);
+        return ResponseEntity.ok(eventDetails);
     }
 
     @GetMapping

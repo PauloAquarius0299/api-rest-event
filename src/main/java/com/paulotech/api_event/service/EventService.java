@@ -1,7 +1,9 @@
 package com.paulotech.api_event.service;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.paulotech.api_event.domain.cupon.Cupon;
 import com.paulotech.api_event.domain.event.Event;
+import com.paulotech.api_event.domain.event.EventDetailsDTO;
 import com.paulotech.api_event.domain.event.EventRequestDTO;
 import com.paulotech.api_event.domain.event.EventResponseDTO;
 import com.paulotech.api_event.repositories.EventRepository;
@@ -20,6 +22,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class EventService {
@@ -35,6 +38,9 @@ public class EventService {
 
     @Autowired
     private AddressService addressService;
+
+    @Autowired
+    private CuponService cuponService;
 
     public Event createEvent(EventRequestDTO data){
         String imgUrl = null;
@@ -122,5 +128,27 @@ public class EventService {
         fos.write(multipartFile.getBytes());
         fos.close();
         return convFile;
+    }
+
+    public EventDetailsDTO getEventDetails(UUID eventId){
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new IllegalArgumentException("Evento não encontrado"));
+        List<Cupon> coupons = cuponService.consultCupons(eventId, new Date());
+
+        List<EventDetailsDTO.CuponDTO> cuponDTOS = coupons.stream()
+                .map(cupon -> new EventDetailsDTO.CuponDTO(
+                        cupon.getCode(),
+                        cupon.getDiscount(),
+                        cupon.getValid()
+                )).collect(Collectors.toList());
+
+        return new EventDetailsDTO(
+                event.getId(),
+                event.getTitle(),
+                event.getDescription(),
+                event.getDate(),
+                event.getAddress() != null ? event.getAddress().getCity() : "",
+                event.getAddress() != null ? event.getAddress().getUf() : "",
+                event.getImgUrl(),
+                cuponDTOS);
     }
 }

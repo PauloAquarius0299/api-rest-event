@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -30,5 +31,9 @@ public class CuponService {
         cupon.setEvent(event);
 
         return cuponRepository.save(cupon);
+    }
+
+    public List<Cupon> consultCupons(UUID eventId, Date currentDate){
+        return cuponRepository.findByEventIdAndValidAfter(eventId, currentDate);
     }
 }
