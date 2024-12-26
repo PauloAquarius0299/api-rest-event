@@ -2,10 +2,7 @@ package com.paulotech.api_event.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.paulotech.api_event.domain.cupon.Cupon;
-import com.paulotech.api_event.domain.event.Event;
-import com.paulotech.api_event.domain.event.EventDetailsDTO;
-import com.paulotech.api_event.domain.event.EventRequestDTO;
-import com.paulotech.api_event.domain.event.EventResponseDTO;
+import com.paulotech.api_event.domain.event.*;
 import com.paulotech.api_event.repositories.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -66,16 +63,16 @@ public class EventService {
         return newEvent;
     }
 
-    public List<EventResponseDTO> getEvents(int page, int size){
+    public List<EventResponseDTO> getUpcomingEvents(int page, int size){
         Pageable pageable =  PageRequest.of(page, size);
-        Page<Event> eventsPage = this.eventRepository.findUpComingEvents(new Date(), pageable);
+        Page<EventAddressProjection> eventsPage = this.eventRepository.findUpComingEvents(new Date(), pageable);
         return eventsPage.map(event -> new EventResponseDTO(
                 event.getId(),
                 event.getTitle(),
                 event.getDescription(),
                 event.getDate(),
-                        event.getAddress() != null ? event.getAddress().getCity() : "",
-                        event.getAddress() != null ? event.getAddress().getUf() : "",
+                        event.getCity() != null ? event.getCity() : "",
+                        event.getUf() != null ? event.getUf() : "",
                 event.getRemote(),
                 event.getEventUrl(),
                 event.getImgUrl()))
@@ -84,23 +81,22 @@ public class EventService {
     }
 
 
-    public List<EventResponseDTO> getFilteredEvents(int page, int size, String title, String city, String uf,
-                                                    Date startDate, Date endDate){
-        title = (title != null) ? title : "";
+    public List<EventResponseDTO> getFilteredEvents(int page, int size, String city, String uf, Date startDate, Date endDate){
+
         city = (city != null) ? city : "";
         uf = (uf != null) ? uf : "";
         startDate = (startDate != null) ? startDate : new Date(0);
         endDate = (endDate != null) ? endDate : new Date();
 
         Pageable pageable =  PageRequest.of(page, size);
-        Page<Event> eventsPage = this.eventRepository.findFilteredEvents(title, city, uf, startDate, endDate, pageable);
+        Page<EventAddressProjection> eventsPage = this.eventRepository.findFilteredEvents(city, uf, startDate, endDate, pageable);
         return eventsPage.map(event -> new EventResponseDTO(
                         event.getId(),
                         event.getTitle(),
                         event.getDescription(),
                         event.getDate(),
-                        event.getAddress() != null ? event.getAddress().getCity() : "",
-                        event.getAddress() != null ? event.getAddress().getUf() : "",
+                        event.getCity() != null ? event.getCity() : "",
+                        event.getUf() != null ? event.getUf() : "",
                         event.getRemote(),
                         event.getEventUrl(),
                         event.getImgUrl()))
@@ -150,5 +146,22 @@ public class EventService {
                 event.getAddress() != null ? event.getAddress().getUf() : "",
                 event.getImgUrl(),
                 cuponDTOS);
+    }
+
+    public List<EventResponseDTO> searchEvents(String title){
+        title = (title != null) ? title : "";
+
+        List<EventAddressProjection> eventsList = this.eventRepository.findEventsByTitle(title);
+        return eventsList.stream().map(event -> new EventResponseDTO(
+                event.getId(),
+                event.getTitle(),
+                event.getDescription(),
+                event.getDate(),
+                event.getCity() != null ? event.getCity() : "",
+                event.getUf() != null ? event.getUf() : "",
+                event.getRemote(),
+                event.getEventUrl(),
+                event.getImgUrl()
+        )).toList();
     }
 }
