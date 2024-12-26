@@ -70,4 +70,10 @@ public class EventController {
         return ResponseEntity.ok(events);
     }
 
+    @DeleteMapping("/{eventId}")
+    public ResponseEntity<Void> deleteEvent(@PathVariable UUID eventId, @RequestBody String adminKey){
+        eventService.deleteEvent(eventId, adminKey);
+        return ResponseEntity.noContent().build();
+    }
+
 }

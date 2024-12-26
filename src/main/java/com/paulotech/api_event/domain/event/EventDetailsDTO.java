@@ -10,7 +10,7 @@ public record EventDetailsDTO(
         String description,
         Date date,
         String city,
-        String uf,
+        String state,
         String imgUrl,
         List<CuponDTO> cupons){
 

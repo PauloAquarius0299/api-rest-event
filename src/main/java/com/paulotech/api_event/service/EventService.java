@@ -27,6 +27,9 @@ public class EventService {
     @Value("${aws.bucket.name}")
     private String bucketName;
 
+    @Value("${admin.key}")
+    private String adminKey;
+
     @Autowired
     private AmazonS3 s3Client;
 
@@ -163,5 +166,13 @@ public class EventService {
                 event.getEventUrl(),
                 event.getImgUrl()
         )).toList();
+    }
+
+    public Void deleteEvent(UUID eventId, String adminKey){
+        if(adminKey == null || !adminKey.equals(this.adminKey)){
+            throw new IllegalArgumentException("Chave de adm invalida");
+        }
+        this.eventRepository.delete(this.eventRepository.findById(eventId).orElseThrow(() -> new IllegalArgumentException("Evento não encontrado")));
+        return null;
     }
 }
