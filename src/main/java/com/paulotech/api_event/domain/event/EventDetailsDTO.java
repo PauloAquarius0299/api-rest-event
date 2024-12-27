@@ -12,7 +12,7 @@ public record EventDetailsDTO(
         String city,
         String state,
         String imgUrl,
-        List<CuponDTO> cupons){
+        String url, List<CuponDTO> cupons){
 
     public record CuponDTO(
             String code,

@@ -148,7 +148,7 @@ public class EventService {
                 event.getAddress() != null ? event.getAddress().getCity() : "",
                 event.getAddress() != null ? event.getAddress().getUf() : "",
                 event.getImgUrl(),
-                cuponDTOS);
+                "https://www.event.com", cuponDTOS);
     }
 
     public List<EventResponseDTO> searchEvents(String title){
