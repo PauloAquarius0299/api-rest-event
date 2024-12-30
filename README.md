@@ -1,5 +1,8 @@
 # ApiRest de Eventos
 Devenvolvendo uma api que retorna informações sobre eventos marcados pelo usuario 
+#### Diagrama de Componentes do projeto.
+![api-event](https://github.com/user-attachments/assets/c9dcb800-a448-4368-8bc8-ac2d02c24b83)
+
 ## Introdução 
 Projeto backend desenvolvido com Java Spring Boot e Maven como gerenciador de dependências. A estrutura do projeto está organizada nas seguintes camadas:
 
